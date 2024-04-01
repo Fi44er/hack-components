@@ -1,24 +1,3 @@
-// import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException, HttpStatus } from '@nestjs/common';
-// import { Observable, throwError } from 'rxjs';
-// import { catchError } from 'rxjs/operators';
-
-// @Injectable()
-// export class GrpcErrorInterceptor implements NestInterceptor {
-//   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-//     return next.handle().pipe(
-//       catchError(error => {
-//         if (error.code === 6) {
-//           console.log(error.details);
-          
-//           throw new HttpException(error.details, HttpStatus.CONFLICT);
-//         } else {
-//           return throwError(error);
-//         }
-//       })
-//     );
-//   }
-// }
-
 import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException, HttpStatus } from '@nestjs/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
