@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserSvcModule } from './user-svc/user-svc.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { GrpcErrorInterceptor } from 'interceptors/GrpcExceptionFilter.interceptor';
+import { GrpcErrorInterceptor } from 'lib/interceptors/GrpcExceptionFilter.interceptor';
 
 @Module({
   imports: [UserSvcModule],

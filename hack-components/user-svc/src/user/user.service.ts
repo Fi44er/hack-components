@@ -33,17 +33,20 @@ export class UserService {
                 ]
             }
         });
+
         if(!userByDb) throw new RpcException({
             message: 'Пользователь не найден',
             code: status.NOT_FOUND
         })
+        
         return userByDb;
     }
     
     // ----- Приватные функции ----- //
+    //USER > FUNCTION
 
     // --- Хэширование пароля --- //
-    private hashPassword(password: string) {
+    private hashPassword(password: string): string {
         return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
     }
 
@@ -58,6 +61,7 @@ export class UserService {
     }
 
     // --- Корректна ли почта --- //
+    //вынести в декоратор (можно потом будет сделать это уневерсальным типо корректность определенных данных)
     private correctEmail(email: string): boolean {
         const emilRegx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
         if(!emilRegx.test(email)) throw new RpcException({
@@ -66,5 +70,4 @@ export class UserService {
         })
         return
     }
-
 }

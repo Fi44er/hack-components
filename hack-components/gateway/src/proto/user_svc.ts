@@ -20,6 +20,20 @@ export interface UserRes {
   role: string;
 }
 
+export interface GenerateCodeReq {
+  email: string;
+  password: string;
+  passwordRepeat: string;
+}
+
+export interface GenerateCodeRes {
+  status: boolean;
+}
+
+export interface RegisterReq {
+  code: string;
+}
+
 export const USER_SVC_PACKAGE_NAME = "user_svc";
 
 export interface UserServiceClient {
@@ -50,3 +64,32 @@ export function UserServiceControllerMethods() {
 }
 
 export const USER_SERVICE_NAME = "UserService";
+
+export interface AuthServiceClient {
+  register(request: GenerateCodeReq): Observable<GenerateCodeRes>;
+
+  verifyCode(request: RegisterReq): Observable<UserRes>;
+}
+
+export interface AuthServiceController {
+  register(request: GenerateCodeReq): Promise<GenerateCodeRes> | Observable<GenerateCodeRes> | GenerateCodeRes;
+
+  verifyCode(request: RegisterReq): Promise<UserRes> | Observable<UserRes> | UserRes;
+}
+
+export function AuthServiceControllerMethods() {
+  return function (constructor: Function) {
+    const grpcMethods: string[] = ["register", "verifyCode"];
+    for (const method of grpcMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
+    }
+    const grpcStreamMethods: string[] = [];
+    for (const method of grpcStreamMethods) {
+      const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
+      GrpcStreamMethod("AuthService", method)(constructor.prototype[method], method, descriptor);
+    }
+  };
+}
+
+export const AUTH_SERVICE_NAME = "AuthService";

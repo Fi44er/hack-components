@@ -1,6 +1,9 @@
 syntax="proto3";
 package user_svc;
 
+
+// -------------------- User -------------------- //
+
 message CreateUserReq {
     string email = 1;
     string password = 2;
@@ -20,4 +23,26 @@ message UserRes {
 service UserService {
     rpc CreateUser(CreateUserReq) returns (UserRes) {}
     rpc FindUser(FindUSerReq) returns (UserRes) {}
+}
+
+
+// -------------------- Auth -------------------- //
+
+message GenerateCodeReq {
+    string email = 1;
+    string password = 2;
+    string passwordRepeat = 3;
+}
+
+message GenerateCodeRes {
+    bool status = 1;
+}
+
+message RegisterReq {
+    string code = 1;
+}
+
+service AuthService {
+    rpc Register(GenerateCodeReq) returns (GenerateCodeRes) {}
+    rpc VerifyCode(RegisterReq) returns (UserRes) {}
 }

@@ -34,7 +34,7 @@ export class GrpcErrorInterceptor implements NestInterceptor {
           throw new HttpException(error.details, httpStatus);
         } else {
           return throwError(error);
-        }
+        }        
       })
     );
   }

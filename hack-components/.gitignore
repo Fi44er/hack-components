@@ -1,2 +1,2 @@
-/gateway/node_modules
-/user-svc/node_modules
+/*/node_modules/
+/*/dist/
