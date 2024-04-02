@@ -20,18 +20,20 @@ export interface UserRes {
   role: string;
 }
 
-export interface GenerateCodeReq {
+export interface firstStageRegReq {
   email: string;
   password: string;
   passwordRepeat: string;
 }
 
-export interface GenerateCodeRes {
+export interface firstStageRegRes {
   status: boolean;
 }
 
-export interface RegisterReq {
-  code: string;
+export interface secondStageRegReq {
+  email: string;
+  password: string;
+  code: number;
 }
 
 export const USER_SVC_PACKAGE_NAME = "user_svc";
@@ -66,20 +68,20 @@ export function UserServiceControllerMethods() {
 export const USER_SERVICE_NAME = "UserService";
 
 export interface AuthServiceClient {
-  register(request: GenerateCodeReq): Observable<GenerateCodeRes>;
+  firstStageReg(request: firstStageRegReq): Observable<firstStageRegRes>;
 
-  verifyCode(request: RegisterReq): Observable<UserRes>;
+  secondStageReg(request: secondStageRegReq): Observable<UserRes>;
 }
 
 export interface AuthServiceController {
-  register(request: GenerateCodeReq): Promise<GenerateCodeRes> | Observable<GenerateCodeRes> | GenerateCodeRes;
+  firstStageReg(request: firstStageRegReq): Promise<firstStageRegRes> | Observable<firstStageRegRes> | firstStageRegRes;
 
-  verifyCode(request: RegisterReq): Promise<UserRes> | Observable<UserRes> | UserRes;
+  secondStageReg(request: secondStageRegReq): Promise<UserRes> | Observable<UserRes> | UserRes;
 }
 
 export function AuthServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["register", "verifyCode"];
+    const grpcMethods: string[] = ["firstStageReg", "secondStageReg"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("AuthService", method)(constructor.prototype[method], method, descriptor);

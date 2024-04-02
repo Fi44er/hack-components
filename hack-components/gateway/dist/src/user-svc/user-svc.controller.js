@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserSvcController = void 0;
 const common_1 = require("@nestjs/common");
-const user_svc_1 = require("../proto/user_svc");
+const user_svc_1 = require("../../proto/user_svc");
 let UserSvcController = class UserSvcController {
     constructor(client) {
         this.client = client;

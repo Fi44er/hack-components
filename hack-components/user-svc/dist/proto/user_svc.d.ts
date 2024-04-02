@@ -13,16 +13,18 @@ export interface UserRes {
     password: string;
     role: string;
 }
-export interface GenerateCodeReq {
+export interface firstStageRegReq {
     email: string;
     password: string;
     passwordRepeat: string;
 }
-export interface GenerateCodeRes {
+export interface firstStageRegRes {
     status: boolean;
 }
-export interface RegisterReq {
-    code: string;
+export interface secondStageRegReq {
+    email: string;
+    password: string;
+    code: number;
 }
 export declare const USER_SVC_PACKAGE_NAME = "user_svc";
 export interface UserServiceClient {
@@ -36,12 +38,12 @@ export interface UserServiceController {
 export declare function UserServiceControllerMethods(): (constructor: Function) => void;
 export declare const USER_SERVICE_NAME = "UserService";
 export interface AuthServiceClient {
-    register(request: GenerateCodeReq): Observable<GenerateCodeRes>;
-    verifyCode(request: RegisterReq): Observable<UserRes>;
+    firstStageReg(request: firstStageRegReq): Observable<firstStageRegRes>;
+    secondStageReg(request: secondStageRegReq): Observable<UserRes>;
 }
 export interface AuthServiceController {
-    register(request: GenerateCodeReq): Promise<GenerateCodeRes> | Observable<GenerateCodeRes> | GenerateCodeRes;
-    verifyCode(request: RegisterReq): Promise<UserRes> | Observable<UserRes> | UserRes;
+    firstStageReg(request: firstStageRegReq): Promise<firstStageRegRes> | Observable<firstStageRegRes> | firstStageRegRes;
+    secondStageReg(request: secondStageRegReq): Promise<UserRes> | Observable<UserRes> | UserRes;
 }
 export declare function AuthServiceControllerMethods(): (constructor: Function) => void;
 export declare const AUTH_SERVICE_NAME = "AuthService";

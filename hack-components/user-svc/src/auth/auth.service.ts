@@ -1,44 +1,74 @@
-import { GenerateCodeReq, GenerateCodeRes } from 'src/proto/user_svc';
+import { UserRes, firstStageRegReq, firstStageRegRes, secondStageRegReq } from 'proto/user_svc';
 import { PrismaService } from './../prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { UserService } from 'src/user/user.service';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import { EmailerService } from 'src/mailer/emailer.service';
+import { UserService } from 'src/user/user.service';
+import { ConfigService } from '@nestjs/config';
+import { generateVerifyCode } from 'lib/utils/verify-code/generate-verify-code';
+import { checkValidCodeVerify } from 'lib/utils/verify-code/checkValidCodeVerify';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly userService : UserService,
-        private readonly emailerService: EmailerService
+        private readonly userService: UserService,
+        private readonly emailerService: EmailerService,
+        private readonly configService: ConfigService
     ) {}
 
-    async register(dto: GenerateCodeReq): Promise<GenerateCodeRes> {
-        // существует ли почта
+    async firstStageReg(dto: firstStageRegReq): Promise<firstStageRegRes> {
+        // проверка на существующего пользователя
         const existUser = await this.prismaService.user.findFirst({ where: { email: dto.email } })
         if(existUser) throw new RpcException({
             message: "Пользователь с такой почтой уже существует",
             code: status.ALREADY_EXISTS
         })
 
-        // совпадают ли пароли
+        // проверка паролей на совпадение
         if(dto.password !== dto.passwordRepeat) throw new RpcException({
             message: "Пароли не совпадают",
             code: status.INVALID_ARGUMENT
         })
         
-        // генерация и отправка кода
-        const code = this.generateVerifyCode()
+        // генерация и отправка кода верификации 
+        const code = generateVerifyCode()
         await this.emailerService.sendEmail({ code, email: dto.email })
-        
+
+        await this.prismaService.verificationCode.upsert({ 
+            where: { email: dto.email },
+            update: {
+                code,
+                createdAt: new Date(Date.now())
+            },
+            create: {
+                code,
+                email: dto.email,
+                createdAt: new Date(Date.now())
+            }
+        })
+               
         return { status: true }
     }
 
-    private generateVerifyCode() {
-        const min = 100000;
-        const max = 999999;
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+    async secondStageReg(dto: secondStageRegReq): Promise<UserRes> {
+        const existCode = await this.prismaService.verificationCode.findFirst({ where: { email: dto.email } })
+        if(!existCode) throw new RpcException({
+            message: "Отправить код верификации повторно",
+            code: status.INVALID_ARGUMENT
+        })
+
+        await checkValidCodeVerify(existCode.createdAt, this.configService)
+
+        if(existCode.code !== dto.code) throw new RpcException({
+            message: "Неверный код верификации",
+            code: status.INVALID_ARGUMENT
+        })
+
+        const user = await this.userService.save({email: dto.email, password: dto.password})
+        await this.prismaService.verificationCode.delete({ where: { email: dto.email } })   
+        return user
     }
 }
 // autentificaton.module.ts lohost:3000/autentification/ [auth || reg ]

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UserSvcController } from './user-svc.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { USER_SERVICE_NAME } from 'src/proto/user_svc';
+import { USER_SERVICE_NAME } from 'proto/user_svc';
 import { resolve } from 'path';
 
 @Module({

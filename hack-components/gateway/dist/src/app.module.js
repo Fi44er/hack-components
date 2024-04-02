@@ -12,7 +12,7 @@ const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const user_svc_module_1 = require("./user-svc/user-svc.module");
 const core_1 = require("@nestjs/core");
-const GrpcExceptionFilter_interceptor_1 = require("../interceptors/GrpcExceptionFilter.interceptor");
+const GrpcExceptionFilter_interceptor_1 = require("../lib/interceptors/GrpcExceptionFilter.interceptor");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;

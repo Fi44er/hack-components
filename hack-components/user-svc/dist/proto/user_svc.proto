@@ -28,21 +28,23 @@ service UserService {
 
 // -------------------- Auth -------------------- //
 
-message GenerateCodeReq {
+message firstStageRegReq {
     string email = 1;
     string password = 2;
     string passwordRepeat = 3;
 }
 
-message GenerateCodeRes {
+message firstStageRegRes {
     bool status = 1;
 }
 
-message RegisterReq {
-    string code = 1;
+message secondStageRegReq  {
+    string email = 1;
+    string password = 2;
+    int32 code = 3;
 }
 
 service AuthService {
-    rpc Register(GenerateCodeReq) returns (GenerateCodeRes) {}
-    rpc VerifyCode(RegisterReq) returns (UserRes) {}
+    rpc firstStageReg(firstStageRegReq) returns (firstStageRegRes) {}
+    rpc secondStageReg(secondStageRegReq) returns (UserRes) {}
 }

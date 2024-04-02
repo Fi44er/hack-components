@@ -1,0 +1,50 @@
+syntax="proto3";
+package user_svc;
+
+
+// -------------------- User -------------------- //
+
+message CreateUserReq {
+    string email = 1;
+    string password = 2;
+}
+
+message FindUSerReq {
+    string idOrEmail = 1;
+}
+
+message UserRes {
+    int32 id = 1;
+    string email = 2;
+    string password = 3;
+    string role = 4;
+}
+
+service UserService {
+    rpc CreateUser(CreateUserReq) returns (UserRes) {}
+    rpc FindUser(FindUSerReq) returns (UserRes) {}
+}
+
+
+// -------------------- Auth -------------------- //
+
+message firstStageRegReq {
+    string email = 1;
+    string password = 2;
+    string passwordRepeat = 3;
+}
+
+message firstStageRegRes {
+    bool status = 1;
+}
+
+message secondStageRegReq  {
+    string email = 1;
+    string password = 2;
+    int32 code = 3;
+}
+
+service AuthService {
+    rpc firstStageReg(firstStageRegReq) returns (firstStageRegRes) {}
+    rpc secondStageReg(secondStageRegReq) returns (UserRes) {}
+}

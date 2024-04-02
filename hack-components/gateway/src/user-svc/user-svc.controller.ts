@@ -1,5 +1,5 @@
 import { BadRequestException, Body, Controller, Get, Inject, OnModuleInit, Param, Post, UseFilters } from '@nestjs/common';
-import { CreateUserReq, FindUSerReq, USER_SERVICE_NAME, UserRes, UserServiceClient } from '../proto/user_svc';
+import { CreateUserReq, FindUSerReq, USER_SERVICE_NAME, UserRes, UserServiceClient } from '../../proto/user_svc';
 import { ClientGrpc } from '@nestjs/microservices';
 
 @Controller('user-svc')

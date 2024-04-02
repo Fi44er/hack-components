@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { status } from '@grpc/grpc-js'
-import { CreateUserReq, UserRes } from 'src/proto/user_svc';
+import { CreateUserReq, UserRes } from 'proto/user_svc';
 import * as bcrypt from 'bcrypt'
 
 @Injectable()

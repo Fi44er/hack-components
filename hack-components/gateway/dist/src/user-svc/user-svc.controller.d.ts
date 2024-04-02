@@ -1,5 +1,5 @@
 import { OnModuleInit } from '@nestjs/common';
-import { CreateUserReq, UserRes } from '../proto/user_svc';
+import { CreateUserReq, UserRes } from '../../proto/user_svc';
 import { ClientGrpc } from '@nestjs/microservices';
 export declare class UserSvcController implements OnModuleInit {
     private readonly client;

@@ -22,7 +22,7 @@ exports.UserServiceControllerMethods = UserServiceControllerMethods;
 exports.USER_SERVICE_NAME = "UserService";
 function AuthServiceControllerMethods() {
     return function (constructor) {
-        const grpcMethods = ["register", "verifyCode"];
+        const grpcMethods = ["firstStageReg", "secondStageReg"];
         for (const method of grpcMethods) {
             const descriptor = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
             (0, microservices_1.GrpcMethod)("AuthService", method)(constructor.prototype[method], method, descriptor);

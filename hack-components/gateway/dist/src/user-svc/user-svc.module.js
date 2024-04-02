@@ -10,7 +10,7 @@ exports.UserSvcModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_svc_controller_1 = require("./user-svc.controller");
 const microservices_1 = require("@nestjs/microservices");
-const user_svc_1 = require("../proto/user_svc");
+const user_svc_1 = require("../../proto/user_svc");
 const path_1 = require("path");
 let UserSvcModule = class UserSvcModule {
 };
