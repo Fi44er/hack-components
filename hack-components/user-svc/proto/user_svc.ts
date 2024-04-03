@@ -45,6 +45,11 @@ export interface SecondStageRegReq {
   agent: Agent | undefined;
 }
 
+export interface ParamsReg {
+  firstStageRegReq?: FirstStageRegReq | undefined;
+  secondStageRegReq?: SecondStageRegReq | undefined;
+}
+
 export const USER_SVC_PACKAGE_NAME = "user_svc";
 
 export interface UserServiceClient {
@@ -52,9 +57,7 @@ export interface UserServiceClient {
 
   findUser(request: FindUSerReq): Observable<UserRes>;
 
-  firstStageReg(request: FirstStageRegReq): Observable<FirstStageRegRes>;
-
-  secondStageReg(request: SecondStageRegReq): Observable<UserRes>;
+  registration(request: Observable<ParamsReg>): Observable<UserRes>;
 }
 
 export interface UserServiceController {
@@ -62,19 +65,17 @@ export interface UserServiceController {
 
   findUser(request: FindUSerReq): Promise<UserRes> | Observable<UserRes> | UserRes;
 
-  firstStageReg(request: FirstStageRegReq): Promise<FirstStageRegRes> | Observable<FirstStageRegRes> | FirstStageRegRes;
-
-  secondStageReg(request: SecondStageRegReq): Promise<UserRes> | Observable<UserRes> | UserRes;
+  registration(request: Observable<ParamsReg>): Promise<UserRes> | Observable<UserRes> | UserRes;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createUser", "findUser", "firstStageReg", "secondStageReg"];
+    const grpcMethods: string[] = ["createUser", "findUser"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);
     }
-    const grpcStreamMethods: string[] = [];
+    const grpcStreamMethods: string[] = ["registration"];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcStreamMethod("UserService", method)(constructor.prototype[method], method, descriptor);

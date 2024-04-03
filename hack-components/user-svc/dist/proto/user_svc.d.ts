@@ -33,18 +33,20 @@ export interface SecondStageRegReq {
     dto: RegisterDto | undefined;
     agent: Agent | undefined;
 }
+export interface ParamsReg {
+    firstStageRegReq?: FirstStageRegReq | undefined;
+    secondStageRegReq?: SecondStageRegReq | undefined;
+}
 export declare const USER_SVC_PACKAGE_NAME = "user_svc";
 export interface UserServiceClient {
     createUser(request: CreateUserReq): Observable<UserRes>;
     findUser(request: FindUSerReq): Observable<UserRes>;
-    firstStageReg(request: FirstStageRegReq): Observable<FirstStageRegRes>;
-    secondStageReg(request: SecondStageRegReq): Observable<UserRes>;
+    registration(request: Observable<ParamsReg>): Observable<UserRes>;
 }
 export interface UserServiceController {
     createUser(request: CreateUserReq): Promise<UserRes> | Observable<UserRes> | UserRes;
     findUser(request: FindUSerReq): Promise<UserRes> | Observable<UserRes> | UserRes;
-    firstStageReg(request: FirstStageRegReq): Promise<FirstStageRegRes> | Observable<FirstStageRegRes> | FirstStageRegRes;
-    secondStageReg(request: SecondStageRegReq): Promise<UserRes> | Observable<UserRes> | UserRes;
+    registration(request: Observable<ParamsReg>): Promise<UserRes> | Observable<UserRes> | UserRes;
 }
 export declare function UserServiceControllerMethods(): (constructor: Function) => void;
 export declare const USER_SERVICE_NAME = "UserService";

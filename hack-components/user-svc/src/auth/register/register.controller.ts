@@ -1,7 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { RegisterService } from './register.service';
-import { GrpcMethod } from '@nestjs/microservices';
-import { FirstStageRegRes, SecondStageRegReq, FirstStageRegReq } from 'proto/user_svc';
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
+import { FirstStageRegRes, SecondStageRegReq, FirstStageRegReq,ParamsReg, UserRes } from 'proto/user_svc';
+import { Observable } from 'rxjs';
 
 @Controller('register')
 export class RegisterController {
@@ -18,5 +19,11 @@ export class RegisterController {
     async secondStageReg(dto: SecondStageRegReq): Promise<any> {
         const tokens = await this.registerService.secondStageReg(dto)
         return tokens
+    }
+
+
+    @GrpcStreamMethod('UserService', 'Registration')
+    async registration(dto: any): Promise<any> {
+      return this.registerService.regestration(dto)
     }
 }

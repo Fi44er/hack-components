@@ -25,19 +25,9 @@ export class UserSvcController implements OnModuleInit {
         return user
     }
 
-    @Post("first-stage-reg")
-    async firstStageReg(@Body()dto: FirstStageRegReq): Promise<FirstStageRegRes> {
-        return this.userClient.firstStageReg(dto).toPromise()
-    }
-
-    @Post('second-stage-reg')
-    async secondStageReg(@Body()dto: RegisterDto, @UserAgent() agent: string): Promise<any> {
-        
-        const secondStageRegReq: SecondStageRegReq = {dto, agent: {agent}}
-        console.log(secondStageRegReq);
-        
-        const token = this.userClient.secondStageReg(secondStageRegReq).toPromise();
-        return token
+    @Post('register')
+    async register(@Body()dto: RegisterDto): Promise<UserRes> {
+        return
     }
 
     // @Post('login')

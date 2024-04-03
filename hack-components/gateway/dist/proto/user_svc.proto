@@ -47,10 +47,16 @@ message SecondStageRegReq  {
     Agent agent = 2;
 }
 
+message ParamsReg{
+    oneof params {
+        FirstStageRegReq firstStageRegReq = 1;
+        SecondStageRegReq secondStageRegReq = 2;
+    }
+}
+
 service UserService {
     rpc CreateUser(CreateUserReq) returns (UserRes) {}
     rpc FindUser(FindUSerReq) returns (UserRes) {}
     
-    rpc FirstStageReg(FirstStageRegReq) returns (FirstStageRegRes) {}
-    rpc SecondStageReg(SecondStageRegReq) returns (UserRes) {}
+    rpc Registration(stream ParamsReg) returns (UserRes) {}
 }
