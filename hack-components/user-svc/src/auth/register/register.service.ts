@@ -63,19 +63,11 @@ export class RegisterService {
         })
 
         await checkValidCodeVerify(existCode.createdAt, this.configService)
-
-        // if(existCode.code !== dto.dto.code) throw new RpcException({
-        //     message: "Неверный код верификации",
-        //     code: status.INVALID_ARGUMENT
-        // })
-
-        
-        
-
+    
         const user = await this.userService.save({ email: dto.dto.email, password: dto.dto.password })
         await this.prismaService.verificationCode.delete({ where: { email: dto.dto.email } })
         const tokens = await this.generateTokensService.generateTokens(user, dto.agent.agent)
-        // console.log(tokens);
+
         
         return tokens
     }
@@ -96,8 +88,6 @@ export class RegisterService {
                     case user.secondStageRegReq:
                         return this.secondStageReg(user.secondStageRegReq)
                 }
-                user.nex
-
             })
         })
     }
