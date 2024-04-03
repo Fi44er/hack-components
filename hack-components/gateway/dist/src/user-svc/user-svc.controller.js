@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserSvcController = void 0;
 const common_1 = require("@nestjs/common");
 const user_svc_1 = require("../../proto/user_svc");
+const user_agent_decorator_1 = require("../../lib/decorators/user-agent.decorator");
 let UserSvcController = class UserSvcController {
     constructor(client) {
         this.client = client;
@@ -29,6 +30,15 @@ let UserSvcController = class UserSvcController {
     async getUser(idOrEmail) {
         const user = this.userClient.findUser({ idOrEmail }).toPromise();
         return user;
+    }
+    async firstStageReg(dto) {
+        return this.userClient.firstStageReg(dto).toPromise();
+    }
+    async secondStageReg(dto, agent) {
+        const secondStageRegReq = { dto, agent: { agent } };
+        console.log(secondStageRegReq);
+        const token = this.userClient.secondStageReg(secondStageRegReq).toPromise();
+        return token;
     }
 };
 exports.UserSvcController = UserSvcController;
@@ -46,6 +56,21 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserSvcController.prototype, "getUser", null);
+__decorate([
+    (0, common_1.Post)("first-stage-reg"),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserSvcController.prototype, "firstStageReg", null);
+__decorate([
+    (0, common_1.Post)('second-stage-reg'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, user_agent_decorator_1.UserAgent)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UserSvcController.prototype, "secondStageReg", null);
 exports.UserSvcController = UserSvcController = __decorate([
     (0, common_1.Controller)('user-svc'),
     __param(0, (0, common_1.Inject)(user_svc_1.USER_SERVICE_NAME)),

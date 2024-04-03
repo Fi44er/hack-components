@@ -1,6 +1,8 @@
 import { BadRequestException, Body, Controller, Get, Inject, OnModuleInit, Param, Post, UseFilters } from '@nestjs/common';
-import { CreateUserReq, FindUSerReq, USER_SERVICE_NAME, UserRes, UserServiceClient } from '../../proto/user_svc';
+import { CreateUserReq, USER_SERVICE_NAME, UserRes, UserServiceClient, agent, firstStageRegReq, firstStageRegRes, registerDto, secondStageRegReq } from '../../proto/user_svc';
 import { ClientGrpc } from '@nestjs/microservices';
+import { Metadata } from '@grpc/grpc-js';
+import { UserAgent } from 'lib/decorators/user-agent.decorator';
 
 @Controller('user-svc')
 export class UserSvcController implements OnModuleInit {
@@ -24,4 +26,28 @@ export class UserSvcController implements OnModuleInit {
         return user
     }
 
+    @Post("first-stage-reg")
+    async firstStageReg(@Body()dto: firstStageRegReq): Promise<firstStageRegRes> {
+        return this.userClient.firstStageReg(dto).toPromise()
+    }
+
+    @Post('second-stage-reg')
+    async secondStageReg(@Body()dto: registerDto, @UserAgent() agent: string): Promise<any> {
+        
+        const secondStageRegReq: secondStageRegReq = {dto, agent: {agent}}
+        console.log(secondStageRegReq);
+        
+        const token = this.userClient.secondStageReg(secondStageRegReq).toPromise();
+        return token
+    }
+
+    // @Post('login')
+    // login(body, @Res() res) {
+    //     grpc.login(body)
+    //     const metadata = new Metadata()
+    //     metadata.get(tokens)
+
+    //     private setcookie(tokens, res)
+
+    //
 }
