@@ -96,7 +96,7 @@ export class RegisterService {
                     case user.secondStageRegReq:
                         return this.secondStageReg(user.secondStageRegReq)
                 }
-                
+                user.nex
 
             })
         })
