@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserRes, firstStageRegReq, firstStageRegRes, secondStageRegReq } from 'proto/user_svc';
+import { UserRes, FirstStageRegReq, FirstStageRegRes, SecondStageRegReq } from 'proto/user_svc';
 import { RpcException } from '@nestjs/microservices';
 import { status } from '@grpc/grpc-js';
 import { EmailerService } from 'src/mailer/emailer.service';
@@ -20,7 +20,7 @@ export class RegisterService {
         private readonly generateTokensService: GenerateTokensService
     ) {}
 
-    async firstStageReg(dto: firstStageRegReq): Promise<firstStageRegRes> {
+    async firstStageReg(dto: FirstStageRegReq): Promise<FirstStageRegRes> {
         // проверка на существующего пользователя
         const existUser = await this.prismaService.user.findFirst({ where: { email: dto.email } })
         if(existUser) throw new RpcException({
@@ -54,7 +54,7 @@ export class RegisterService {
         return { status: true }
     }
 
-    async secondStageReg(dto: secondStageRegReq): Promise<any> {
+    async secondStageReg(dto: SecondStageRegReq): Promise<any> {
         const existCode = await this.prismaService.verificationCode.findFirst({ where: { email: dto.dto.email } })
         if(!existCode) throw new RpcException({
             message: "Отправить код верификации повторно",
@@ -63,10 +63,10 @@ export class RegisterService {
 
         await checkValidCodeVerify(existCode.createdAt, this.configService)
 
-        if(existCode.code !== dto.dto.code) throw new RpcException({
-            message: "Неверный код верификации",
-            code: status.INVALID_ARGUMENT
-        })
+        // if(existCode.code !== dto.dto.code) throw new RpcException({
+        //     message: "Неверный код верификации",
+        //     code: status.INVALID_ARGUMENT
+        // })
 
         
         
@@ -74,6 +74,8 @@ export class RegisterService {
         const user = await this.userService.save({email: dto.dto.email, password: dto.dto.password})
         await this.prismaService.verificationCode.delete({ where: { email: dto.dto.email } })
         const tokens = await this.generateTokensService.generateTokens(user, dto.agent.agent)
+        // console.log(tokens);
+        
         return tokens
     }
 }

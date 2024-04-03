@@ -3,18 +3,21 @@ import { RpcException } from '@nestjs/microservices';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { status } from '@grpc/grpc-js'
 import { CreateUserReq, UserRes } from 'proto/user_svc';
-import * as bcrypt from 'bcrypt'
-
+import { correctEmail, existUser, hashingPassword } from './functions/applied';
 @Injectable()
+
 export class UserService {
-    constructor(private readonly prismaService: PrismaService) {}
+    constructor(
+        private readonly prismaService: PrismaService,
+    ) {}
 
     // ----- Сохранение пользователя ----- //
+    
     async save(user: CreateUserReq) {
-        this.correctEmail(user.email)
-        await this.existUser(user.email)
+        correctEmail(user.email)
+        await existUser(user.email, this.prismaService)
         
-        const hashPassword = this.hashPassword(user.password)
+        const hashPassword = hashingPassword(user.password)
         return await this.prismaService.user.create({
             data: {
                 email: user.email,
@@ -42,32 +45,4 @@ export class UserService {
         return userByDb;
     }
     
-    // ----- Приватные функции ----- //
-    //USER > FUNCTION
-
-    // --- Хэширование пароля --- //
-    private hashPassword(password: string): string {
-        return bcrypt.hashSync(password, bcrypt.genSaltSync(10))
-    }
-
-    // --- Существует ли пользователь --- //
-    private async existUser(email: string): Promise<boolean> {
-        const existUser = await this.prismaService.user.findFirst({ where: { email: email } })
-        if(existUser) throw new RpcException({
-            message: 'Пользователь с такой почтой уже существует',
-            code: status.ALREADY_EXISTS
-        })
-        return
-    }
-
-    // --- Корректна ли почта --- //
-    //вынести в декоратор (можно потом будет сделать это уневерсальным типо корректность определенных данных)
-    private correctEmail(email: string): boolean {
-        const emilRegx = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-        if(!emilRegx.test(email)) throw new RpcException({
-            message: "Некорректная почта",
-            code: status.INVALID_ARGUMENT
-        })
-        return
-    }
 }

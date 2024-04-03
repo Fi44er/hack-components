@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Token, User } from '@prisma/client';
 import { add } from 'date-fns';
-import { Tokens } from 'src/auth/interfaces/token.interface';
+import { Tokens } from 'src/auth/shared/interfaces/token.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 } from 'uuid';
 
@@ -22,7 +22,7 @@ export class GenerateTokensService {
             role: user.role
         })
         const refreshToken = await this.getRefreshToken(user.id, agent)
-        return { accessToken, refreshToken }
+        return { accessToken, refreshToken}
     }
 
     // Генерация refresh токена

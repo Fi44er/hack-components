@@ -22,35 +22,35 @@ message UserRes {
 
 // -------------------- Auth -------------------- //
 
-message firstStageRegReq {
+message FirstStageRegReq {
     string email = 1;
     string password = 2;
     string passwordRepeat = 3;
 }
 
-message firstStageRegRes {
+message FirstStageRegRes {
     bool status = 1;
 }
 
-message registerDto {
+message RegisterDto {
     string email = 1;
     string password = 2;
     int32 code = 3;
 }
 
-message agent {
+message Agent {
     string agent = 1;
 }
 
-message secondStageRegReq  {
-    registerDto dto = 1;
-    agent agent = 2;
+message SecondStageRegReq  {
+    RegisterDto dto = 1;
+    Agent agent = 2;
 }
 
 service UserService {
     rpc CreateUser(CreateUserReq) returns (UserRes) {}
     rpc FindUser(FindUSerReq) returns (UserRes) {}
     
-    rpc FirstStageReg(firstStageRegReq) returns (firstStageRegRes) {}
-    rpc SecondStageReg(secondStageRegReq) returns (UserRes) {}
+    rpc FirstStageReg(FirstStageRegReq) returns (FirstStageRegRes) {}
+    rpc SecondStageReg(SecondStageRegReq) returns (UserRes) {}
 }

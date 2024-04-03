@@ -9,7 +9,6 @@ import { status } from '@grpc/grpc-js';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-    private readonly logger = new Logger(JwtStrategy.name)
     constructor(
         private readonly configService: ConfigService,
         private readonly userService: UserService
@@ -20,6 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             secretOrKey: configService.get('JWT_SECRET')
         });
     }
+    private readonly logger = new Logger(JwtStrategy.name)
 
     async validate(payload: jwtPayload) { // payload токена(id, login, roles)
         const user = await this.userService.findUser(String(payload.id)).catch(err => {

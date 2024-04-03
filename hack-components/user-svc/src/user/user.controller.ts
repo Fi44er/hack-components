@@ -10,6 +10,7 @@ export class UserController {
   @GrpcMethod('UserService', 'CreateUser')
   async createUser(user: CreateUserReq): Promise<UserRes> {
     return await this.userService.save(user);
+    return
   }
 
   @GrpcMethod('UserService', 'FindUser')

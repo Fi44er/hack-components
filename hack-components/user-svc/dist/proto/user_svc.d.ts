@@ -13,38 +13,38 @@ export interface UserRes {
     password: string;
     role: string;
 }
-export interface firstStageRegReq {
+export interface FirstStageRegReq {
     email: string;
     password: string;
     passwordRepeat: string;
 }
-export interface firstStageRegRes {
+export interface FirstStageRegRes {
     status: boolean;
 }
-export interface registerDto {
+export interface RegisterDto {
     email: string;
     password: string;
     code: number;
 }
-export interface agent {
+export interface Agent {
     agent: string;
 }
-export interface secondStageRegReq {
-    dto: registerDto | undefined;
-    agent: agent | undefined;
+export interface SecondStageRegReq {
+    dto: RegisterDto | undefined;
+    agent: Agent | undefined;
 }
 export declare const USER_SVC_PACKAGE_NAME = "user_svc";
 export interface UserServiceClient {
     createUser(request: CreateUserReq): Observable<UserRes>;
     findUser(request: FindUSerReq): Observable<UserRes>;
-    firstStageReg(request: firstStageRegReq): Observable<firstStageRegRes>;
-    secondStageReg(request: secondStageRegReq): Observable<UserRes>;
+    firstStageReg(request: FirstStageRegReq): Observable<FirstStageRegRes>;
+    secondStageReg(request: SecondStageRegReq): Observable<UserRes>;
 }
 export interface UserServiceController {
     createUser(request: CreateUserReq): Promise<UserRes> | Observable<UserRes> | UserRes;
     findUser(request: FindUSerReq): Promise<UserRes> | Observable<UserRes> | UserRes;
-    firstStageReg(request: firstStageRegReq): Promise<firstStageRegRes> | Observable<firstStageRegRes> | firstStageRegRes;
-    secondStageReg(request: secondStageRegReq): Promise<UserRes> | Observable<UserRes> | UserRes;
+    firstStageReg(request: FirstStageRegReq): Promise<FirstStageRegRes> | Observable<FirstStageRegRes> | FirstStageRegRes;
+    secondStageReg(request: SecondStageRegReq): Promise<UserRes> | Observable<UserRes> | UserRes;
 }
 export declare function UserServiceControllerMethods(): (constructor: Function) => void;
 export declare const USER_SERVICE_NAME = "UserService";
