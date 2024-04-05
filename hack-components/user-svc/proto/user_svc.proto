@@ -1,6 +1,14 @@
 syntax="proto3";
 package user_svc;
 
+// -------------------- General -------------------- //
+
+enum Role {
+    USER = 0;
+    ADMIN = 1;
+} 
+
+
 // -------------------- User -------------------- //
 
 message CreateUserReq {
@@ -21,10 +29,21 @@ message UserRes {
 
 // -------------------- Auth -------------------- //
 
+message AccessToken {
+    string token = 1;
+    int32 exp = 2;
+}
+
+message VerifyCodeRes {
+    AccessToken accessToken = 1;
+}
+
+// ----- Register ----- //
 message RegisterReq {
     string email = 1;
     string password = 2;
     string passwordRepeat = 3;
+    reserved 4 to 6;
 }
 
 message RegisterRes {
@@ -42,14 +61,25 @@ message VerifyCodeReq {
     string agent = 2;
 }
 
-message AccessToken {
-    string token = 1;
-    int32 exp = 2;
+
+// ----- Login ----- //
+message LoginReq {
+    string email = 1;
+    string password = 2;
 }
 
-message VerifyCodeRes {
-    AccessToken accessToken = 1;
+// ----- Logout ----- //
+message LogoutReq {
+    int32 id = 1;
+    string agent = 2;
+    string token = 3;
+    reserved 4 to 5;
 }
+
+message LogoutRes {
+    bool status = 1;
+}
+
 
 service UserService {
     rpc CreateUser(CreateUserReq) returns (UserRes) {}
@@ -57,4 +87,8 @@ service UserService {
 
     rpc Register(RegisterReq) returns (RegisterRes) {}
     rpc VerifyCode(VerifyCodeReq) returns (VerifyCodeRes) {}
+
+    rpc Login (LoginReq) returns (VerifyCodeRes) {}
+
+    rpc Logout (LogoutReq) returns (LogoutRes) {}
 }

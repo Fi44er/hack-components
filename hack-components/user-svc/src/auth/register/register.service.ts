@@ -9,6 +9,7 @@ import { generateVerifyCode } from 'lib/utils/verify-code/generate-verify-code.u
 import { checkValidCodeVerify } from 'lib/utils/verify-code/checkValidCodeVerify.util';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { GenerateTokensService } from 'lib/utils/generate-tokens/generate-tokens.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class RegisterService {
@@ -36,7 +37,6 @@ export class RegisterService {
         
         // генерация и отправка кода верификации 
         const code = generateVerifyCode()
-        console.log(code);
         
         await this.emailerService.sendEmail({ code, email: dto.email })
 
@@ -68,10 +68,19 @@ export class RegisterService {
             message: "Неверный код верификации",
             code: status.INVALID_ARGUMENT
         })
-    
-        const user = await this.userService.save({ email: dto.body.email, password: dto.body.password })
+        
+        const existUser = await this.prismaService.user.findUnique({ where: { email: dto.body.email } })
+        const user: User = !existUser ? await this.userService.save({ email: dto.body.email, password: dto.body.password }) : null
         await this.prismaService.verificationCode.delete({ where: { email: dto.body.email } })
-        const tokens = await this.generateTokensService.generateTokens(user, dto.agent)
-        return tokens
+
+        if (user) {
+
+            const token = await this.generateTokensService.generateTokens(user, dto.agent)
+            return token
+        }
+
+
+        const token = await this.generateTokensService.generateTokens(existUser, dto.agent)
+        return token
     }
 }

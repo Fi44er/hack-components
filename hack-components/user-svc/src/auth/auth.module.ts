@@ -6,6 +6,5 @@ import { LogoutModule } from './logout/logout.module';
 @Module({
   imports: [RegisterModule, LoginModule, LogoutModule],
   controllers: [],
-  providers: []
 })
 export class AuthModule {}

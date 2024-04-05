@@ -29,6 +29,7 @@ enum Roles {
 }
 
 model Token {
+  id        Int      @id @default(autoincrement())
   token     String   @unique
   exp       DateTime
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

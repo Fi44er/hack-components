@@ -1,10 +1,9 @@
-import { Abstract, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Token, User } from '@prisma/client';
 import { add } from 'date-fns';
 import { VerifyCodeRes } from 'proto/user_svc';
-import { Tokens } from 'src/auth/shared/interfaces/token.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 } from 'uuid';
 import { convertToSecondsUtil } from '../convert-to-seconds';

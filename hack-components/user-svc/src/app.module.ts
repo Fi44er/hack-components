@@ -6,6 +6,6 @@ import { EmailerModule } from './mailer/emailer.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, UserModule, AuthModule, EmailerModule, ConfigModule.forRoot({ isGlobal: true })],
+  imports: [PrismaModule, UserModule, AuthModule, EmailerModule, ConfigModule.forRoot({ isGlobal: true })]
 })
 export class AppModule {}

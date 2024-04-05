@@ -4,6 +4,12 @@ import { Observable } from "rxjs";
 
 export const protobufPackage = "user_svc";
 
+export enum Role {
+  USER = 0,
+  ADMIN = 1,
+  UNRECOGNIZED = -1,
+}
+
 export interface CreateUserReq {
   email: string;
   password: string;
@@ -20,6 +26,16 @@ export interface UserRes {
   role: string;
 }
 
+export interface AccessToken {
+  token: string;
+  exp: number;
+}
+
+export interface VerifyCodeRes {
+  accessToken: AccessToken | undefined;
+}
+
+/** ----- Register ----- // */
 export interface RegisterReq {
   email: string;
   password: string;
@@ -41,13 +57,21 @@ export interface VerifyCodeReq {
   agent: string;
 }
 
-export interface AccessToken {
-  token: string;
-  exp: number;
+/** ----- Login ----- // */
+export interface LoginReq {
+  email: string;
+  password: string;
 }
 
-export interface VerifyCodeRes {
-  accessToken: AccessToken | undefined;
+/** ----- Logout ----- // */
+export interface LogoutReq {
+  id: number;
+  agent: string;
+  token: string;
+}
+
+export interface LogoutRes {
+  status: boolean;
 }
 
 export const USER_SVC_PACKAGE_NAME = "user_svc";
@@ -60,6 +84,10 @@ export interface UserServiceClient {
   register(request: RegisterReq): Observable<RegisterRes>;
 
   verifyCode(request: VerifyCodeReq): Observable<VerifyCodeRes>;
+
+  login(request: LoginReq): Observable<VerifyCodeRes>;
+
+  logout(request: LogoutReq): Observable<LogoutRes>;
 }
 
 export interface UserServiceController {
@@ -70,11 +98,15 @@ export interface UserServiceController {
   register(request: RegisterReq): Promise<RegisterRes> | Observable<RegisterRes> | RegisterRes;
 
   verifyCode(request: VerifyCodeReq): Promise<VerifyCodeRes> | Observable<VerifyCodeRes> | VerifyCodeRes;
+
+  login(request: LoginReq): Promise<VerifyCodeRes> | Observable<VerifyCodeRes> | VerifyCodeRes;
+
+  logout(request: LogoutReq): Promise<LogoutRes> | Observable<LogoutRes> | LogoutRes;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createUser", "findUser", "register", "verifyCode"];
+    const grpcMethods: string[] = ["createUser", "findUser", "register", "verifyCode", "login", "logout"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);

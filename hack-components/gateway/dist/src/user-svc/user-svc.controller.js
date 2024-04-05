@@ -16,6 +16,7 @@ exports.UserSvcController = void 0;
 const common_1 = require("@nestjs/common");
 const user_svc_1 = require("../../proto/user_svc");
 const user_agent_decorator_1 = require("../../lib/decorators/user-agent.decorator");
+const cookies_decorator_1 = require("../../lib/decorators/cookies.decorator");
 const ACCESS_TOKEN = 'accesstoken';
 let UserSvcController = class UserSvcController {
     constructor(client) {
@@ -33,25 +34,36 @@ let UserSvcController = class UserSvcController {
         return user;
     }
     async register(dto) {
-        const status = await this.userClient.register(dto).toPromise();
+        const status = this.userClient.register(dto);
         return status;
     }
     async verifyCode(body, agent, res) {
         const verifyCodeReq = { body: { ...body }, agent };
-        const tokens = await this.userClient.verifyCode(verifyCodeReq).toPromise();
-        this.setRefreshTokenToCookie(tokens, res);
-        return tokens;
+        const token = await this.userClient.verifyCode(verifyCodeReq).toPromise();
+        this.setRefreshTokenToCookie(token.accessToken, res);
+        return token;
     }
-    setRefreshTokenToCookie(tokens, res) {
-        if (!tokens)
+    setRefreshTokenToCookie(token, res) {
+        if (!token)
             throw new common_1.UnauthorizedException();
-        res.cookie(ACCESS_TOKEN, tokens.accessToken.token, {
+        res.cookie(ACCESS_TOKEN, token.token, {
             httpOnly: true,
             sameSite: 'lax',
-            expires: new Date(Date.now() + tokens.accessToken.exp),
+            expires: new Date(Date.now() + token.exp),
             path: '/'
         });
-        res.status(common_1.HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
+        res.status(common_1.HttpStatus.CREATED).json({ accessToken: token.token });
+    }
+    async logout({ id }, token, res, agent) {
+        const logoutReq = {
+            id: id,
+            agent,
+            token: token
+        };
+        console.log(logoutReq.token);
+        const logout = this.userClient.logout(logoutReq);
+        res.cookie(ACCESS_TOKEN, '', { httpOnly: true, secure: true, expires: new Date() });
+        return logout;
     }
 };
 exports.UserSvcController = UserSvcController;
@@ -85,6 +97,16 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, Object]),
     __metadata("design:returntype", Promise)
 ], UserSvcController.prototype, "verifyCode", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, cookies_decorator_1.Cookie)(ACCESS_TOKEN)),
+    __param(2, (0, common_1.Res)()),
+    __param(3, (0, user_agent_decorator_1.UserAgent)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object, String]),
+    __metadata("design:returntype", Promise)
+], UserSvcController.prototype, "logout", null);
 exports.UserSvcController = UserSvcController = __decorate([
     (0, common_1.Controller)('user-svc'),
     __param(0, (0, common_1.Inject)(user_svc_1.USER_SERVICE_NAME)),

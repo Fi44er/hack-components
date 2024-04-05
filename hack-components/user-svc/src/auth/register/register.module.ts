@@ -6,7 +6,7 @@ import { GenerateTokensModule } from 'lib/utils/generate-tokens/generate-tokens.
 import { RegisterController } from './register.controller';
 
 @Module({
-  imports: [UserModule, EmailerModule, GenerateTokensModule],
+  imports: [EmailerModule, UserModule, GenerateTokensModule],
   controllers: [RegisterController],
   providers: [RegisterService],
 })
