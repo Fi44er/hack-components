@@ -1,28 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Abstract, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Token, User } from '@prisma/client';
 import { add } from 'date-fns';
+import { VerifyCodeRes } from 'proto/user_svc';
 import { Tokens } from 'src/auth/shared/interfaces/token.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 } from 'uuid';
+import { convertToSecondsUtil } from '../convert-to-seconds';
 
 @Injectable()
 export class GenerateTokensService {
     constructor(
         private readonly jwtService: JwtService,
-        private readonly prismaService: PrismaService
+        private readonly prismaService: PrismaService,
+        private readonly configService: ConfigService
     ) {}
 
+   
+
     // Генерация пары accsess и refresh токенов
-    async generateTokens(user: User, agent: string): Promise<Tokens> {
+    async generateTokens(user: User, agent: string): Promise<VerifyCodeRes> {
         
         const accessToken = 'Bearer ' + this.jwtService.sign({
             id: user.id,
             login: user.email,
             role: user.role
         })
-        const refreshToken = await this.getRefreshToken(user.id, agent)
-        return { accessToken, refreshToken}
+        this.getRefreshToken(user.id, agent)
+        const accessExp = convertToSecondsUtil(this.configService.get("JWT_EXP"))
+        return { accessToken: { token: accessToken, exp: accessExp} }
     }
 
     // Генерация refresh токена

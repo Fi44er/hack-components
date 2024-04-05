@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserSvcController = void 0;
 const common_1 = require("@nestjs/common");
 const user_svc_1 = require("../../proto/user_svc");
+const user_agent_decorator_1 = require("../../lib/decorators/user-agent.decorator");
+const ACCESS_TOKEN = 'accesstoken';
 let UserSvcController = class UserSvcController {
     constructor(client) {
         this.client = client;
@@ -23,15 +25,33 @@ let UserSvcController = class UserSvcController {
         this.userClient = this.client.getService(user_svc_1.USER_SERVICE_NAME);
     }
     async createUser(dto) {
-        const user = this.userClient.createUser(dto).toPromise();
+        const user = await this.userClient.createUser(dto).toPromise();
         return user;
     }
     async getUser(idOrEmail) {
-        const user = this.userClient.findUser({ idOrEmail }).toPromise();
+        const user = await this.userClient.findUser({ idOrEmail }).toPromise();
         return user;
     }
     async register(dto) {
-        return;
+        const status = await this.userClient.register(dto).toPromise();
+        return status;
+    }
+    async verifyCode(body, agent, res) {
+        const verifyCodeReq = { body: { ...body }, agent };
+        const tokens = await this.userClient.verifyCode(verifyCodeReq).toPromise();
+        this.setRefreshTokenToCookie(tokens, res);
+        return tokens;
+    }
+    setRefreshTokenToCookie(tokens, res) {
+        if (!tokens)
+            throw new common_1.UnauthorizedException();
+        res.cookie(ACCESS_TOKEN, tokens.accessToken.token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            expires: new Date(Date.now() + tokens.accessToken.exp),
+            path: '/'
+        });
+        res.status(common_1.HttpStatus.CREATED).json({ accessToken: tokens.accessToken });
     }
 };
 exports.UserSvcController = UserSvcController;
@@ -56,6 +76,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserSvcController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('verify-code'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, user_agent_decorator_1.UserAgent)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, Object]),
+    __metadata("design:returntype", Promise)
+], UserSvcController.prototype, "verifyCode", null);
 exports.UserSvcController = UserSvcController = __decorate([
     (0, common_1.Controller)('user-svc'),
     __param(0, (0, common_1.Inject)(user_svc_1.USER_SERVICE_NAME)),

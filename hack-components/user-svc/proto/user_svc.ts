@@ -20,34 +20,34 @@ export interface UserRes {
   role: string;
 }
 
-export interface FirstStageRegReq {
+export interface RegisterReq {
   email: string;
   password: string;
   passwordRepeat: string;
 }
 
-export interface FirstStageRegRes {
+export interface RegisterRes {
   status: boolean;
 }
 
-export interface RegisterDto {
+export interface VerifyCodeBody {
   email: string;
   password: string;
   code: number;
 }
 
-export interface Agent {
+export interface VerifyCodeReq {
+  body: VerifyCodeBody | undefined;
   agent: string;
 }
 
-export interface SecondStageRegReq {
-  dto: RegisterDto | undefined;
-  agent: Agent | undefined;
+export interface AccessToken {
+  token: string;
+  exp: number;
 }
 
-export interface ParamsReg {
-  firstStageRegReq?: FirstStageRegReq | undefined;
-  secondStageRegReq?: SecondStageRegReq | undefined;
+export interface VerifyCodeRes {
+  accessToken: AccessToken | undefined;
 }
 
 export const USER_SVC_PACKAGE_NAME = "user_svc";
@@ -57,7 +57,9 @@ export interface UserServiceClient {
 
   findUser(request: FindUSerReq): Observable<UserRes>;
 
-  registration(request: Observable<ParamsReg>): Observable<UserRes>;
+  register(request: RegisterReq): Observable<RegisterRes>;
+
+  verifyCode(request: VerifyCodeReq): Observable<VerifyCodeRes>;
 }
 
 export interface UserServiceController {
@@ -65,17 +67,19 @@ export interface UserServiceController {
 
   findUser(request: FindUSerReq): Promise<UserRes> | Observable<UserRes> | UserRes;
 
-  registration(request: Observable<ParamsReg>): Promise<UserRes> | Observable<UserRes> | UserRes;
+  register(request: RegisterReq): Promise<RegisterRes> | Observable<RegisterRes> | RegisterRes;
+
+  verifyCode(request: VerifyCodeReq): Promise<VerifyCodeRes> | Observable<VerifyCodeRes> | VerifyCodeRes;
 }
 
 export function UserServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["createUser", "findUser"];
+    const grpcMethods: string[] = ["createUser", "findUser", "register", "verifyCode"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("UserService", method)(constructor.prototype[method], method, descriptor);
     }
-    const grpcStreamMethods: string[] = ["registration"];
+    const grpcStreamMethods: string[] = [];
     for (const method of grpcStreamMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcStreamMethod("UserService", method)(constructor.prototype[method], method, descriptor);

@@ -13,40 +13,42 @@ export interface UserRes {
     password: string;
     role: string;
 }
-export interface FirstStageRegReq {
+export interface RegisterReq {
     email: string;
     password: string;
     passwordRepeat: string;
 }
-export interface FirstStageRegRes {
+export interface RegisterRes {
     status: boolean;
 }
-export interface RegisterDto {
+export interface VerifyCodeBody {
     email: string;
     password: string;
     code: number;
 }
-export interface Agent {
+export interface VerifyCodeReq {
+    body: VerifyCodeBody | undefined;
     agent: string;
 }
-export interface SecondStageRegReq {
-    dto: RegisterDto | undefined;
-    agent: Agent | undefined;
+export interface AccessToken {
+    token: string;
+    exp: number;
 }
-export interface ParamsReg {
-    firstStageRegReq?: FirstStageRegReq | undefined;
-    secondStageRegReq?: SecondStageRegReq | undefined;
+export interface VerifyCodeRes {
+    accessToken: AccessToken | undefined;
 }
 export declare const USER_SVC_PACKAGE_NAME = "user_svc";
 export interface UserServiceClient {
     createUser(request: CreateUserReq): Observable<UserRes>;
     findUser(request: FindUSerReq): Observable<UserRes>;
-    registration(request: Observable<ParamsReg>): Observable<UserRes>;
+    register(request: RegisterReq): Observable<RegisterRes>;
+    verifyCode(request: VerifyCodeReq): Observable<VerifyCodeRes>;
 }
 export interface UserServiceController {
     createUser(request: CreateUserReq): Promise<UserRes> | Observable<UserRes> | UserRes;
     findUser(request: FindUSerReq): Promise<UserRes> | Observable<UserRes> | UserRes;
-    registration(request: Observable<ParamsReg>): Promise<UserRes> | Observable<UserRes> | UserRes;
+    register(request: RegisterReq): Promise<RegisterRes> | Observable<RegisterRes> | RegisterRes;
+    verifyCode(request: VerifyCodeReq): Promise<VerifyCodeRes> | Observable<VerifyCodeRes> | VerifyCodeRes;
 }
 export declare function UserServiceControllerMethods(): (constructor: Function) => void;
 export declare const USER_SERVICE_NAME = "UserService";
