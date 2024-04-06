@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserSvcController = void 0;
 const common_1 = require("@nestjs/common");
 const user_svc_1 = require("../../proto/user_svc");
-const user_agent_decorator_1 = require("../../lib/decorators/user-agent.decorator");
+const userAgent_decorator_1 = require("../../lib/decorators/userAgent.decorator");
 const cookies_decorator_1 = require("../../lib/decorators/cookies.decorator");
 const ACCESS_TOKEN = 'accesstoken';
 let UserSvcController = class UserSvcController {
@@ -35,6 +35,10 @@ let UserSvcController = class UserSvcController {
     }
     async register(dto) {
         const status = this.userClient.register(dto);
+        return status;
+    }
+    async login(dto) {
+        const status = this.userClient.login(dto);
         return status;
     }
     async verifyCode(body, agent, res) {
@@ -60,10 +64,9 @@ let UserSvcController = class UserSvcController {
             agent,
             token: token
         };
-        console.log(logoutReq.token);
-        const logout = this.userClient.logout(logoutReq);
         res.cookie(ACCESS_TOKEN, '', { httpOnly: true, secure: true, expires: new Date() });
-        return logout;
+        res.sendStatus(common_1.HttpStatus.OK);
+        return this.userClient.logout(logoutReq);
     }
 };
 exports.UserSvcController = UserSvcController;
@@ -89,9 +92,16 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserSvcController.prototype, "register", null);
 __decorate([
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserSvcController.prototype, "login", null);
+__decorate([
     (0, common_1.Post)('verify-code'),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, user_agent_decorator_1.UserAgent)()),
+    __param(1, (0, userAgent_decorator_1.UserAgent)()),
     __param(2, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, Object]),
@@ -102,7 +112,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, cookies_decorator_1.Cookie)(ACCESS_TOKEN)),
     __param(2, (0, common_1.Res)()),
-    __param(3, (0, user_agent_decorator_1.UserAgent)()),
+    __param(3, (0, userAgent_decorator_1.UserAgent)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, String, Object, String]),
     __metadata("design:returntype", Promise)

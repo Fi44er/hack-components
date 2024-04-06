@@ -1,7 +1,8 @@
+import { status } from '@grpc/grpc-js';
 import { Body, Controller, Get, HttpStatus, Inject, OnModuleInit, Param, Post, Res, UnauthorizedException } from '@nestjs/common';
-import { AccessToken, CreateUserReq, LogoutReq, LogoutRes, RegisterReq, RegisterRes, USER_SERVICE_NAME, UserRes, UserServiceClient, VerifyCodeBody, VerifyCodeReq, VerifyCodeRes } from '../../proto/user_svc';
+import { AccessToken, CreateUserReq, LoginReq, LogoutReq, LogoutRes, RegisterReq, RegisterRes, USER_SERVICE_NAME, UserRes, UserServiceClient, VerifyCodeBody, VerifyCodeReq, VerifyCodeRes } from '../../proto/user_svc';
 import { ClientGrpc } from '@nestjs/microservices';
-import { UserAgent } from 'lib/decorators/user-agent.decorator';
+import { UserAgent } from 'lib/decorators/userAgent.decorator';
 import { Response } from 'express';
 import { Cookie } from 'lib/decorators/cookies.decorator';
 import { Observable } from 'rxjs';
@@ -40,6 +41,12 @@ export class UserSvcController implements OnModuleInit {
         return status
     }
 
+    @Post('login')
+    async login(@Body() dto: LoginReq): Promise<Observable<RegisterRes>> {
+        const status = this.userClient.login(dto)
+        return status
+    }
+
 
     @Post('verify-code')
     async verifyCode(@Body() body: VerifyCodeBody, @UserAgent() agent: string, @Res() res: Response): Promise<VerifyCodeRes> {
@@ -70,10 +77,9 @@ export class UserSvcController implements OnModuleInit {
             agent,
             token: token
         }
-        
-        console.log(logoutReq.token);
-        const logout = this.userClient.logout(logoutReq)
+
         res.cookie(ACCESS_TOKEN, '', { httpOnly: true, secure: true, expires: new Date() })
-        return logout
+        res.sendStatus(HttpStatus.OK)
+        return this.userClient.logout(logoutReq)
     }
 }

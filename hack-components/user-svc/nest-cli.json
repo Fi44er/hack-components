@@ -11,7 +11,7 @@
       },
       {
         "include": "./mailer/templates/*.hbs",
-        "outDir": "./dist/src/user"
+        "outDir": "./dist/src"
       }
     ],
     "watchAssets": true

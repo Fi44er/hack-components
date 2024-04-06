@@ -9,7 +9,6 @@ export class LogoutController {
   
   @GrpcMethod('UserService', 'Logout')
   async logoutUser(dto: LogoutReq): Promise<LogoutRes> {
-    console.log(dto)
     return this.logoutService.logout(dto);
   }
   

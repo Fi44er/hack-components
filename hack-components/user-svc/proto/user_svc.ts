@@ -85,7 +85,7 @@ export interface UserServiceClient {
 
   verifyCode(request: VerifyCodeReq): Observable<VerifyCodeRes>;
 
-  login(request: LoginReq): Observable<VerifyCodeRes>;
+  login(request: LoginReq): Observable<RegisterRes>;
 
   logout(request: LogoutReq): Observable<LogoutRes>;
 }
@@ -99,7 +99,7 @@ export interface UserServiceController {
 
   verifyCode(request: VerifyCodeReq): Promise<VerifyCodeRes> | Observable<VerifyCodeRes> | VerifyCodeRes;
 
-  login(request: LoginReq): Promise<VerifyCodeRes> | Observable<VerifyCodeRes> | VerifyCodeRes;
+  login(request: LoginReq): Promise<RegisterRes> | Observable<RegisterRes> | RegisterRes;
 
   logout(request: LogoutReq): Promise<LogoutRes> | Observable<LogoutRes> | LogoutRes;
 }

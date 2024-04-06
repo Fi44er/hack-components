@@ -88,7 +88,7 @@ service UserService {
     rpc Register(RegisterReq) returns (RegisterRes) {}
     rpc VerifyCode(VerifyCodeReq) returns (VerifyCodeRes) {}
 
-    rpc Login (LoginReq) returns (VerifyCodeRes) {}
+    rpc Login (LoginReq) returns (RegisterRes) {}
 
     rpc Logout (LogoutReq) returns (LogoutRes) {}
 }
